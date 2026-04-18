@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/theme_manager.dart';
+import '../../../home/presentation/pages/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -209,7 +210,11 @@ class _LoginPageState extends State<LoginPage> {
       height: 55,
       child: ElevatedButton(
         onPressed: () {
-          debugPrint("Giriş Yap Tıklandı");
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage(userName: "Metehan Anlı")),
+            (route) => false,
+          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,

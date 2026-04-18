@@ -25,7 +25,21 @@ class ThemeManager {
       case AppThemeType.dark:
         return Colors.blueGrey.shade900;
       case AppThemeType.base:
-        return const Color(0xFF1E5631); // Şık koyu yeşil
+        return const Color(0xFF144544); // Image dark green
+    }
+  }
+
+  /// Temaya göre açık/ikincil renk döndürür
+  static Color getLightColor() {
+    switch (currentTheme) {
+      case AppThemeType.blue:
+        return Colors.blue.shade200;
+      case AppThemeType.pink:
+        return Colors.pink.shade200;
+      case AppThemeType.dark:
+        return Colors.blueGrey.shade300;
+      case AppThemeType.base:
+        return const Color(0xFFC0D890); // Image light green
     }
   }
 
