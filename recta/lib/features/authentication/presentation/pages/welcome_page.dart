@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/theme_manager.dart';
+import '../../../home/presentation/pages/home_page.dart';
 import 'login_page.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -66,7 +67,11 @@ class WelcomePage extends StatelessWidget {
                       _buildCustomButton(
                         text: "Misafir Girişi",
                         onPressed: () {
-                          debugPrint("Misafir Girişine Tıklandı");
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => const HomePage(userName: "Misafir Kullanıcı")),
+                            (route) => false,
+                          );
                         },
                       ),
                       
