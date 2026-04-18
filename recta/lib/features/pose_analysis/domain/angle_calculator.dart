@@ -2,24 +2,19 @@ import 'dart:math' as math;
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 
 class AngleCalculator {
-  
-  static double getAngle(PoseLandmark firstPoint, PoseLandmark midPoint, PoseLandmark lastPoint) {
-    // 1. Ters Trigonometri (atan2) kullanarak radyan cinsinden açıyı hesaplıyoruz
-    double result = math.atan2(lastPoint.y - midPoint.y, lastPoint.x - midPoint.x) -
-                    math.atan2(firstPoint.y - midPoint.y, firstPoint.x - midPoint.x);
-
-    // 2. Radyanı Dereceye çeviriyoruz (pi = 180 derece)
-    result = result * (180.0 / math.pi);
-
-    // 3. Açıyı mutlak değere (pozitif) çeviriyoruz
-    result = result.abs();
-
-    // 4. İnsan vücudundaki bir eklem açısı 180 dereceden büyük olamaz. 
-    // Eğer iç açı yerine dış açıyı bulduysak, onu 360'tan çıkararak iç açıyı elde ediyoruz.
-    if (result > 180.0) {
-      result = 360.0 - result;
-    }
-
+  // 1. İç Açı (ML Kit objeleri ile çalışır)
+  static double getAngle(PoseLandmark first, PoseLandmark mid, PoseLandmark last) {
+    double result = math.atan2(last.y - mid.y, last.x - mid.x) -
+                    math.atan2(first.y - mid.y, first.x - mid.x);
+    result = (result * 180.0 / math.pi).abs();
+    if (result > 180.0) result = 360.0 - result;
     return result;
+  }
+
+  // 2. Dikey Açı (Artık ML Kit objesi değil, doğrudan x ve y koordinatlarını istiyoruz)
+  // Bu sayede hem 'nose' objesini hem de 'shoulderMidX' sayısını buraya verebileceğiz.
+  static double getAngleFromVertical(double x1, double y1, double x2, double y2) {
+    double angle = math.atan2(x2 - x1, y2 - y1);
+    return (angle * 180.0 / math.pi).abs();
   }
 }
