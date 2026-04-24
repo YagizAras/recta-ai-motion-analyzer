@@ -5,7 +5,7 @@ class PoseBlock {
   final dynamic _repository;
   bool _isRecording = false;
   final dynamic _stopwatch;
-  final List<dynamic> _collectedFrames = [];
+  List<dynamic> _collectedFrames = [];
   bool _isFrameProcessing = false;
 
   PoseBlock(this._repository, this._stopwatch);
