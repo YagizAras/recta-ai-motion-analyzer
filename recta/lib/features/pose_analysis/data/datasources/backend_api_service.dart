@@ -1,18 +1,17 @@
-import 'dart:convert';
+import 'dart:async'; // TimeoutException için gerekli
+import 'dart:developer' as developer; // print yerine profesyonel loglama için
 import 'package:http/http.dart' as http;
 
 class BackendApiService {
-  // Senin kendi sunucunun adresi (Gerçek adresi buraya yazacaksın)
-  // Eğer Android emülatörden kendi bilgisayarına (localhost) istek atacaksın adres: http://10.0.2.2:3000/api/analyze 
-  final String _apiUrl = "https://senin-backend-url.com/api/analyze-pose";
+  // Not: İleride bunu doğrudan ApiConstants.analyzeEndpoint üzerinden çekeceksin.
+  // Şimdilik test edebilmen için burada bırakıyorum. (Emülatör için 10.0.2.2)
+  final String _apiUrl = "http://10.0.2.2:5000/api/analyze";
 
   Future<String> sendPoseData(String jsonPayload) async {
     try {
-      print("İnternete çıkılıyor, JSON Backend'e gönderiliyor...");
+      developer.log("İnternete çıkılıyor, JSON Backend'e gönderiliyor...", name: 'BackendApiService');
       
-      // TODO: Backend'in hazır olduğunda aşağıdaki mock kodunu silip gerçek isteği aç.
-      
-      /* GERÇEK HTTP İSTEĞİ (Sunucu hazır olunca bu yorumu kaldır)
+      // GERÇEK HTTP İSTEĞİ
       final response = await http.post(
         Uri.parse(_apiUrl),
         headers: {
@@ -20,22 +19,25 @@ class BackendApiService {
           "Accept": "application/json",
         },
         body: jsonPayload,
-      );
+      ).timeout(const Duration(seconds: 10)); // 10 saniye kalkanı eklendi
 
       if (response.statusCode == 200) {
-        // Sunucundan dönen cevabı (Gemini'nin yorumunu) döndür
+        developer.log("İşlem Başarılı. Sunucu Yanıtı alındı.", name: 'BackendApiService');
         return response.body; 
       } else {
-        throw Exception("Sunucu Hatası: ${response.statusCode}");
+        developer.log("Sunucu Hatası: HTTP ${response.statusCode}", level: 800, name: 'BackendApiService');
+        throw Exception("Sunucu Hatası: Geçersiz yanıt kodu (${response.statusCode})");
       }
-      */
-
-      // SAHTE (MOCK) YANIT - Geliştirme aşaması için
-      await Future.delayed(const Duration(seconds: 2)); 
-      return "Gemini Analizi: Hareket formu başarılı, dirsek açısı stabil."; 
-
+      
+    } on TimeoutException {
+      // 10 saniye içinde sunucudan/Gemini'den cevap gelmezse buraya düşer
+      developer.log("İstek zaman aşımına uğradı (10 sn).", level: 1000, name: 'NetworkError');
+      throw Exception("Bağlantı zaman aşımına uğradı. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.");
+      
     } catch (e) {
-      throw Exception("Sunucuya veri gönderilirken hata oluştu: $e");
+      // İnternet kopukluğu, sunucunun kapalı olması gibi diğer ağ hataları
+      developer.log("Ağ istisnası yakalandı: $e", level: 1000, name: 'NetworkError');
+      throw Exception("Sunucuya ulaşılamadı. Bağlantınızı kontrol edin.");
     }
   }
 }
