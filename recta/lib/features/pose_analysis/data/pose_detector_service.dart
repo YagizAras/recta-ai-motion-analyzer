@@ -19,7 +19,6 @@ class PoseDetectorService {
     _poseDetector = PoseDetector(options: options);
   }
 
-
   // 3. Görüntüyü İşleme Fonksiyonu
   /// Kameradan gelen InputImage'i alır, içinde iskelet arar ve bulduğu iskeletleri döndürür.
   Future<List<Pose>> processImage(InputImage inputImage) async {

@@ -5,6 +5,7 @@ import '../datasources/backend_api_service.dart';
 import '../../domain/angle_calculator.dart';
 import '../models/pose_frame_data.dart';
 
+
 class PoseRepository {
   final PoseDetectorService _poseService;
   final BackendApiService _apiService;
@@ -15,9 +16,9 @@ class PoseRepository {
   })  : _poseService = poseService,
         _apiService = apiService;
 
-  Future<PoseFrameData?> processSingleFrame(InputImage inputImage, int timeElapsedMs) async {
+  Future<(PoseFrameData?, List<Pose>)> processSingleFrame(InputImage inputImage, int timeElapsedMs, int frameIndex) async {
     final poses = await _poseService.processImage(inputImage);
-    if (poses.isEmpty) return null;
+    if (poses.isEmpty) return (null, <Pose>[]);
 
     final pose = poses.first;
     Map<String, double> detectedAngles = {};
@@ -81,16 +82,24 @@ if (nose != null && rShoulder != null && lShoulder != null) {
   );
 }
 
-    if (detectedAngles.isEmpty) return null;
+// Açı hesaplanamasa bile çizim için poses listesini her zaman döndürüyoruz
+    if (detectedAngles.isEmpty) return (null, poses);
 
-    return PoseFrameData(
+    final frameData = PoseFrameData(
+      frameIndex: frameIndex,
       timestampMs: timeElapsedMs,
       angles: detectedAngles,
     );
+
+    return (frameData, poses);
   }
 
   Future<String> sendDataToBackend(List<PoseFrameData> frames) async {
     final jsonString = jsonEncode(frames.map((e) => e.toJson()).toList());
     return await _apiService.sendPoseData(jsonString);
+  }
+
+  void dispose() {
+    _poseService.dispose();
   }
 }
