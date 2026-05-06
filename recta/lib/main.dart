@@ -1,42 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'features/pose_analysis/data/pose_detector_service.dart';
-import 'features/pose_analysis/data/datasources/backend_api_service.dart';
-import 'features/pose_analysis/data/repositories/pose_repository.dart';
-import 'features/pose_analysis/presentation/bloc/pose_bloc.dart';
-import 'features/pose_analysis/presentation/pages/pose_camera_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
+  // Flutter altyapısını hazırlıyoruz
   WidgetsFlutterBinding.ensureInitialized();
-  final cameras = await availableCameras();
-  runApp(MyApp(cameras: cameras));
+
+  // Firebase'i başlatıyoruz
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Kamerayı sildik, uygulamayı direkt başlatıyoruz
+  runApp(const MyApp());
 }
 
+// Uygulamanın şimdilik boş kalıbı (Kızarıklık olmasın diye)
 class MyApp extends StatelessWidget {
-  final List<CameraDescription> cameras;
-
-  const MyApp({super.key, required this.cameras});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Canlı Hareket Analizi',
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
-        useMaterial3: true,
-      ),
-      home: BlocProvider(
-        create: (context) => PoseBloc(
-          // KÖK BAĞLANTI BURASI: Repository'e iki alt servisini veriyoruz
-          repository: PoseRepository(
-            poseService: PoseDetectorService(), 
-            apiService: BackendApiService(), 
-          ),
+      home: Scaffold(
+        body: Center(
+          child: Text('Firebase Başarıyla Bağlandı! '),
         ),
-        child: PoseCameraPage(cameras: cameras),
       ),
     );
   }
