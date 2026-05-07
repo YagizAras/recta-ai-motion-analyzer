@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'profil_duzenle.dart';
 import 'bildirim_tercihleri.dart';
-import 'güvenlikvesifre.dart';
+import 'güvenlikvesifre.dart'; // Senin dosya ismin
 import 'yardim_merkezi.dart';
-import 'uyg_hakkinda.dart';
-import 'kvkk_izin.dart'; // KVKK sayfası eklendi
+import 'uyg_hakkinda.dart'; // Senin dosya ismin
+import 'kvkk_izin.dart';
+import 'giris_ekrani.dart'; // Çıkış yapınca dönmek için gerekli
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -22,7 +23,7 @@ class ProfileScreen extends StatelessWidget {
           physics: const ClampingScrollPhysics(),
           child: Column(
             children: [
-              // ÜST GRADYAN ALAN VE KULLANICI BİLGİSİ
+              // 1. ÜST GRADYAN ALAN (Header)
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.only(top: 60, bottom: 40),
@@ -52,6 +53,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 30),
+                    // PROFİL FOTOĞRAFI
                     Stack(
                       children: [
                         Container(
@@ -91,7 +93,7 @@ class ProfileScreen extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-              // AYARLAR LİSTESİ
+              // 2. AYARLAR LİSTESİ
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
@@ -134,7 +136,7 @@ class ProfileScreen extends StatelessWidget {
                     _buildProfileMenuItem(
                       context, 
                       Icons.privacy_tip_outlined, 
-                      "Gizlilik ve KVKK", // YENİ EKLENEN BUTON
+                      "Gizlilik ve KVKK", 
                       neonIndigo,
                       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PrivacyPolicyScreen())),
                     ),
@@ -148,7 +150,7 @@ class ProfileScreen extends StatelessWidget {
 
                     const SizedBox(height: 30),
                     
-                    // ÇIKIŞ BUTONU
+                    // 3. ÇIKIŞ YAP BUTONU (Sistemi Sıfırlar)
                     _buildProfileMenuItem(
                       context, 
                       Icons.logout_rounded, 
@@ -156,7 +158,12 @@ class ProfileScreen extends StatelessWidget {
                       Colors.redAccent, 
                       isLast: true,
                       onTap: () {
-                        Navigator.of(context).popUntil((route) => route.isFirst);
+                        // Tüm sayfaları temizle ve Giriş Ekranına dön
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => const AuthScreen()),
+                          (route) => false,
+                        );
                       },
                     ),
                     
