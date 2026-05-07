@@ -3,18 +3,18 @@ import 'gelisim_detay.dart';
 import 'geri_bildirimler.dart';
 import 'profil.dart';
 import 'branslar.dart';
-import 'kamera_ekrani.dart';
+import 'analiz_secim_ekrani.dart'; // Yeni hazırlık ekranımızı bağladık
 
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Renk Paleti - Güncellenmiş Modern Yeşil
+    // Renk Paleti - Mevcut Tasarımınla Tam Uyumlu
     const Color bgLight = Color(0xFFF8F9FB);
     const Color neonIndigo = Color(0xFF536DFE);
     const Color neonCoral = Color(0xFFFF5252);
-    const Color deepTeal = Color(0xFF00897B); // İstediğin o hafif koyu ve tok yeşil tonu
+    const Color deepTeal = Color(0xFF00897B); 
     const Color darkText = Color(0xFF1A1A1A);
 
     return ScrollConfiguration(
@@ -59,12 +59,14 @@ class StatisticsScreen extends StatelessWidget {
 
                 _buildSectionTitle("ANALİZ"),
                 const SizedBox(height: 12),
+                
+                // YENİ HAREKET ANALİZİ - Seçim Ekranına Yönlendirildi
                 _buildWideActionCard(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const CameraScreen(exerciseName: "Genel Analiz")));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AnalysisSelectionScreen()));
                   },
                   title: "YENİ HAREKET ANALİZİ",
-                  subtitle: "Kamerayı aç ve formunu kontrol et",
+                  subtitle: "Analiz modunu seç ve formunu kontrol et",
                   color: Colors.white,
                   icon: Icons.camera_alt_outlined,
                   iconColor: neonIndigo,
@@ -112,6 +114,7 @@ class StatisticsScreen extends StatelessWidget {
               ],
             ),
 
+            // ALT NAVİGASYON BARI
             Align(
               alignment: Alignment.bottomCenter,
               child: _buildBottomNavigationBar(context, neonIndigo),
@@ -236,9 +239,12 @@ class StatisticsScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildNavItem(Icons.home_filled, "Anasayfa", true, activeColor, () {}),
+          
+          // ALT BAR ANALİZ BUTONU - Seçim Ekranına Yönlendirildi
           _buildNavItem(Icons.camera_alt_outlined, "Analiz", false, activeColor, () {
-             Navigator.push(context, MaterialPageRoute(builder: (context) => const CameraScreen()));
+             Navigator.push(context, MaterialPageRoute(builder: (context) => const AnalysisSelectionScreen()));
           }),
+          
           _buildNavItem(Icons.auto_graph_rounded, "Gelişim", false, activeColor, () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => const ProgressDetailScreen()));
           }),
