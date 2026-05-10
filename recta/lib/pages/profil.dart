@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'profil_duzenle.dart';
 import 'bildirim_tercihleri.dart';
-import 'güvenlikvesifre.dart'; // Senin dosya ismin
+import 'güvenlikvesifre.dart'; 
 import 'yardim_merkezi.dart';
-import 'uyg_hakkinda.dart'; // Senin dosya ismin
+import 'uyg_hakkinda.dart'; 
 import 'kvkk_izin.dart';
-import 'giris_ekrani.dart'; // Çıkış yapınca dönmek için gerekli
+import 'giris_ekrani.dart'; 
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final String userName; 
+  final String userEmail; // E-posta bilgisini de burada karşılıyoruz
+
+  const ProfileScreen({
+    super.key, 
+    this.userName = "DEĞERLİ KULLANICIMIZ",
+    this.userEmail = "ornek@mail.com", // Varsayılan değer
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +30,7 @@ class ProfileScreen extends StatelessWidget {
           physics: const ClampingScrollPhysics(),
           child: Column(
             children: [
-              // 1. ÜST GRADYAN ALAN (Header)
+              // ÜST HEADER ALANI
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.only(top: 60, bottom: 40),
@@ -53,7 +60,6 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 30),
-                    // PROFİL FOTOĞRAFI
                     Stack(
                       children: [
                         Container(
@@ -72,7 +78,15 @@ class ProfileScreen extends StatelessWidget {
                           bottom: 0,
                           right: 0,
                           child: GestureDetector(
-                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfileScreen())),
+                            onTap: () => Navigator.push(
+                              context, 
+                              MaterialPageRoute(
+                                builder: (context) => EditProfileScreen(
+                                  userName: userName,
+                                  userEmail: userEmail,
+                                ),
+                              ),
+                            ),
                             child: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: const BoxDecoration(color: neonIndigo, shape: BoxShape.circle),
@@ -83,30 +97,38 @@ class ProfileScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    const Text("İLAYDA", 
-                      style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                    const Text("Bilgisayar Mühendisliği Öğrencisi", 
-                      style: TextStyle(color: Colors.white60, fontSize: 14, fontWeight: FontWeight.w500)),
+                    Text(userName.toUpperCase(), 
+                      style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 1)),
                   ],
                 ),
               ),
 
               const SizedBox(height: 30),
 
-              // 2. AYARLAR LİSTESİ
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   children: [
                     _buildSectionTitle("HESAP AYARLARI"),
                     const SizedBox(height: 15),
+
+                    // KİŞİSEL BİLGİLER - YÖNLENDİRME GÜNCELLENDİ
                     _buildProfileMenuItem(
                       context,
                       Icons.person_outline_rounded, 
                       "Kişisel Bilgiler", 
                       neonIndigo,
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfileScreen())),
+                      onTap: () => Navigator.push(
+                        context, 
+                        MaterialPageRoute(
+                          builder: (context) => EditProfileScreen(
+                            userName: userName,
+                            userEmail: userEmail,
+                          ),
+                        ),
+                      ),
                     ),
+
                     _buildProfileMenuItem(
                       context, 
                       Icons.notifications_none_rounded, 
@@ -150,7 +172,6 @@ class ProfileScreen extends StatelessWidget {
 
                     const SizedBox(height: 30),
                     
-                    // 3. ÇIKIŞ YAP BUTONU (Sistemi Sıfırlar)
                     _buildProfileMenuItem(
                       context, 
                       Icons.logout_rounded, 
@@ -158,7 +179,6 @@ class ProfileScreen extends StatelessWidget {
                       Colors.redAccent, 
                       isLast: true,
                       onTap: () {
-                        // Tüm sayfaları temizle ve Giriş Ekranına dön
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(builder: (context) => const AuthScreen()),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'istatistik.dart'; 
 import 'kvkk_izin.dart'; 
+import 'sifre_sifirla.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -17,12 +18,71 @@ class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
 
+  bool _isValidEmail(String email) {
+    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+  }
+
   void _handleAuth() {
-    if (_emailController.text.trim().isEmpty || _passwordController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Lütfen alanları doldurun.")));
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final name = _nameController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Lütfen tüm alanları doldurun.")),
+      );
       return;
     }
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const StatisticsScreen()));
+
+    if (!_isValidEmail(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Lütfen geçerli bir e-posta adresi girin.")),
+      );
+      return;
+    }
+
+    if (!isLogin && password.length < 8) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Şifreniz en az 8 karakterden oluşmalıdır."),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+    
+    if (!isLogin && !kvkkApproved) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Lütfen KVKK metnini onaylayın.")),
+      );
+      return;
+    }
+
+    // YENİ AKIŞ: Kayıt sonrası Giriş ekranına yönlendirme
+    if (isLogin) {
+      // Giriş yapılıyorsa direkt ana sayfaya git
+      Navigator.pushReplacement(
+        context, 
+        MaterialPageRoute(
+          builder: (context) => StatisticsScreen(
+            userName: name.isEmpty ? "DEĞERLİ KULLANICIMIZ" : name,
+            userEmail: email,
+          ),
+        ),
+      );
+    } else {
+      // Kayıt olunuyorsa giriş moduna at ve bilgilendir
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Kaydınız başarıyla oluşturuldu! Lütfen şimdi giriş yapın."),
+          backgroundColor: Colors.green,
+        ),
+      );
+      setState(() {
+        isLogin = true; // Kaydol'dan Giriş Yap moduna geçiş
+      });
+      _passwordController.clear(); // Güvenlik için şifreyi temizle
+    }
   }
 
   @override
@@ -38,53 +98,65 @@ class _AuthScreenState extends State<AuthScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 25),
           child: Column(
             children: [
-              const SizedBox(height: 70), 
+              const SizedBox(height: 100), // Logonun aşağı kaydırma payı
+              
               Center(
                 child: Container(
-                  padding: const EdgeInsets.all(25), 
+                  width: 160, // Logonun büyük boyutu
+                  height: 160, 
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(40), 
+                    shape: BoxShape.circle,
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 25, offset: const Offset(0, 10))
+                      BoxShadow(
+                        color: neonIndigo.withOpacity(0.1),
+                        blurRadius: 40,
+                        offset: const Offset(0, 15),
+                      )
                     ],
                   ),
-                  child: Image.asset('assets/recta_logo.png', height: 90, fit: BoxFit.contain), 
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/recta_logo.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 ),
               ),
-
-              const SizedBox(height: 60), 
               
-              Text(
-                isLogin ? "Oturum Aç" : "Kayıt Ol",
-                style: const TextStyle(color: mainDark, fontSize: 32, fontWeight: FontWeight.w900),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                "Devam etmek için bilgilerinizi girin.",
-                style: TextStyle(color: Colors.black38, fontSize: 14, fontWeight: FontWeight.w600),
-              ),
-
               const SizedBox(height: 50), 
+              Text(
+                isLogin ? "HOŞ GELDİN" : "HESABINI OLUŞTUR",
+                style: const TextStyle(
+                  color: mainDark, 
+                  fontSize: 24, 
+                  fontWeight: FontWeight.w900, 
+                  letterSpacing: 1.5
+                ),
+              ),
+              const SizedBox(height: 40),
 
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: Colors.black.withOpacity(0.05)),
                   boxShadow: [
-                    BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 10))
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.03),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    )
                   ],
                 ),
                 child: Column(
                   children: [
                     if (!isLogin) ...[
-                      _buildSimpleInput("Ad Soyad", Icons.person_outline_rounded, _nameController, neonIndigo),
-                      const Divider(height: 1, color: Colors.black12, indent: 45),
+                      _buildSimpleInput("Ad Soyad", Icons.person_outline, _nameController, neonIndigo),
+                      const Divider(height: 1, color: Colors.black12),
                     ],
-                    _buildSimpleInput("E-posta", Icons.email_outlined, _emailController, neonIndigo),
-                    const Divider(height: 1, color: Colors.black12, indent: 45),
+                    _buildSimpleInput("E-posta Adresi", Icons.email_outlined, _emailController, neonIndigo),
+                    const Divider(height: 1, color: Colors.black12),
                     _buildSimpleInput("Şifre", Icons.lock_outline_rounded, _passwordController, neonIndigo, isPassword: true),
                   ],
                 ),
@@ -94,33 +166,63 @@ class _AuthScreenState extends State<AuthScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {},
-                    child: const Text("Şifremi Unuttum", style: TextStyle(color: Colors.black38, fontSize: 12, fontWeight: FontWeight.w700)),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const PasswordResetScreen()),
+                      );
+                    },
+                    child: const Text(
+                      "Şifremi Unuttum",
+                      style: TextStyle(
+                        color: Colors.black38,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                      ),
+                    ),
                   ),
                 ),
 
-              const SizedBox(height: 35), 
+              const SizedBox(height: 30),
 
-              // *** KIRPILMIŞ VE BOYUTU AYARLANMIŞ BUTON ***
-              Center(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.65, // Ekranın %65'i kadar (sağdan soldan kırpıldı)
-                  child: GestureDetector(
-                    onTap: _handleAuth,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 18), // Dikeyde biraz daha zarif
-                      decoration: BoxDecoration(
-                        color: mainDark,
-                        borderRadius: BorderRadius.circular(25),
-                        boxShadow: [BoxShadow(color: mainDark.withOpacity(0.2), blurRadius: 15, offset: const Offset(0, 8))],
+              if (!isLogin)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Row(
+                    children: [
+                      Checkbox(
+                        value: kvkkApproved,
+                        activeColor: neonIndigo,
+                        onChanged: (val) => setState(() => kvkkApproved = val!),
                       ),
-                      child: Center(
-                        child: Text(
-                          isLogin ? "GİRİŞ YAP" : "KAYDOL",
-                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 1.2, fontSize: 15),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const PrivacyPolicyScreen()));
+                          },
+                          child: const Text(
+                            "KVKK Metnini ve kullanım koşullarını kabul ediyorum.",
+                            style: TextStyle(color: Colors.black54, fontSize: 12, fontWeight: FontWeight.w600),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
+                  ),
+                ),
+
+              SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: ElevatedButton(
+                  onPressed: _handleAuth,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: mainDark,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    isLogin ? "GİRİŞ YAP" : "KAYDOL",
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 1.2),
                   ),
                 ),
               ),
@@ -155,6 +257,9 @@ class _AuthScreenState extends State<AuthScreen> {
     return TextField(
       controller: controller,
       obscureText: isPassword,
+      keyboardType: isPassword ? TextInputType.text : (hint.contains("E-posta") ? TextInputType.emailAddress : TextInputType.text),
+      enableSuggestions: !isPassword,
+      autocorrect: !isPassword,
       style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF1A1B2F)),
       decoration: InputDecoration(
         hintText: hint,

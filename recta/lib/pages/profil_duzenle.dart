@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
 
 class EditProfileScreen extends StatelessWidget {
-  const EditProfileScreen({super.key});
+  final String userName;
+  final String userEmail; 
+
+  const EditProfileScreen({
+    super.key, 
+    this.userName = "", 
+    this.userEmail = "" 
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Uygulama Renk Paleti
     const Color bgLight = Color(0xFFF8F9FB);
     const Color neonIndigo = Color(0xFF536DFE);
-    const Color darkText = Color(0xFF1A1A1A);
+
+    // İsim bölme işlemi
+    List<String> nameParts = userName.split(" ");
+    String firstName = nameParts.isNotEmpty ? nameParts[0] : "";
+    String lastName = nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
 
     return ScrollConfiguration(
       behavior: const ScrollBehavior().copyWith(overscroll: false),
@@ -21,20 +31,15 @@ class EditProfileScreen extends StatelessWidget {
           iconTheme: const IconThemeData(color: Colors.black),
           title: const Text(
             "BİLGİLERİ DÜZENLE",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w900,
-              fontSize: 18,
-              letterSpacing: 1.5,
-            ),
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 18, letterSpacing: 1.5),
           ),
         ),
         body: SingleChildScrollView(
           physics: const ClampingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
           child: Column(
             children: [
-              // 1. PROFİL FOTOĞRAFI DÜZENLEME
+              // PROFİL FOTOĞRAFI ALANI
               Center(
                 child: Column(
                   children: [
@@ -44,110 +49,59 @@ class EditProfileScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(
-                              color: neonIndigo.withOpacity(0.2),
-                              width: 2,
-                            ),
+                            border: Border.all(color: neonIndigo.withOpacity(0.2), width: 2),
                           ),
                           child: const CircleAvatar(
-                            radius: 50,
-                            backgroundColor: Color(0xFFE0E0E0),
-                            child: Icon(Icons.person, size: 50, color: Colors.white),
+                            radius: 45,
+                            backgroundColor: Colors.white,
+                            child: Icon(Icons.person, size: 45, color: Colors.black12),
                           ),
                         ),
                         Positioned(
                           bottom: 0,
                           right: 0,
                           child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: const BoxDecoration(
-                              color: neonIndigo,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(Icons.camera_alt_rounded,
-                                color: Colors.white, size: 16),
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(color: neonIndigo, shape: BoxShape.circle),
+                            child: const Icon(Icons.camera_alt_rounded, color: Colors.white, size: 14),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      "Fotoğrafı Değiştir",
-                      style: TextStyle(
-                        color: neonIndigo,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 13,
-                      ),
-                    ),
+                    const SizedBox(height: 8),
+                    const Text("Fotoğrafı Değiştir", style: TextStyle(color: neonIndigo, fontWeight: FontWeight.w800, fontSize: 12)),
                   ],
                 ),
               ),
+              const SizedBox(height: 20),
 
-              const SizedBox(height: 40),
+              // ALANLAR: Ad, Soyad ve E-posta dolu geleceği için Controller kullanıyoruz
+              _buildEditField("AD", "", Icons.person_outline_rounded, initialValue: firstName),
+              _buildEditField("SOYAD", "", Icons.person_outline_rounded, initialValue: lastName),
+              _buildEditField("E-POSTA", "", Icons.email_outlined, initialValue: userEmail), 
 
-              // 2. DÜZENLEME ALANLARI
-              _buildEditField(
-                  label: "AD SOYAD",
-                  hint: "İlayda ...",
-                  icon: Icons.person_outline_rounded),
-              _buildEditField(
-                  label: "YAŞ",
-                  hint: "20",
-                  icon: Icons.cake_outlined,
-                  keyboardType: TextInputType.number),
-              _buildEditField(
-                  label: "BOY (CM)",
-                  hint: "165",
-                  icon: Icons.height_rounded,
-                  keyboardType: TextInputType.number),
-              _buildEditField(
-                  label: "KİLO (KG)",
-                  hint: "55",
-                  icon: Icons.monitor_weight_outlined,
-                  keyboardType: TextInputType.number),
-              _buildEditField(
-                  label: "SAKATLIK GEÇMİŞİ",
-                  hint: "Diz hassasiyeti, omuz fleksiyonu...",
-                  icon: Icons.history_edu_rounded,
-                  isLongText: true),
+              // Bu alanlar boş (hint) ve soluk renkli başlayacak
+              _buildEditField("YAŞ", "Yaşınızı girin", Icons.cake_outlined, keyboardType: TextInputType.number),
+              _buildEditField("BOY (CM)", "Boyunuzu girin", Icons.height_rounded, keyboardType: TextInputType.number),
+              _buildEditField("KİLO (KG)", "Kilonuzu girin", Icons.monitor_weight_outlined, keyboardType: TextInputType.number),
+              _buildEditField("SAKATLIK GEÇMİŞİ", "Detayları girin...", Icons.history_edu_rounded, isLongText: true),
 
-              const SizedBox(height: 30),
-
-              // 3. KAYDET BUTONU
-              GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF1A1B2F), Color(0xFF2D2E4A)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF1A1B2F).withOpacity(0.3),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
+              const SizedBox(height: 10),
+              
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1A1B2F),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                    elevation: 0,
                   ),
-                  child: const Center(
-                    child: Text(
-                      "DEĞİŞİKLİKLERİ KAYDET",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1.5,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
+                  child: const Text("DEĞİŞİKLİKLERİ KAYDET", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 30),
             ],
           ),
         ),
@@ -155,48 +109,35 @@ class EditProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEditField({
-    required String label,
-    required String hint,
-    required IconData icon,
-    bool isLongText = false,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
+  Widget _buildEditField(String label, String hint, IconData icon, {bool isLongText = false, TextInputType keyboardType = TextInputType.text, String? initialValue}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              color: Colors.black26,
-              fontSize: 11,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.5,
-            ),
-          ),
-          const SizedBox(height: 10),
-          TextField(
+          Text(label, style: const TextStyle(color: Colors.black26, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
+          const SizedBox(height: 6),
+          TextFormField(
+            initialValue: initialValue,
             keyboardType: keyboardType,
-            maxLines: isLongText ? 3 : 1,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            maxLines: isLongText ? 2 : 1,
+            // YAZDIĞINDA GÖRÜNECEK RENK: SİYAH
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.black), 
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: const TextStyle(
-                  color: Colors.black26, fontSize: 14, fontWeight: FontWeight.w500),
-              prefixIcon: Icon(icon, color: const Color(0xFF536DFE), size: 22),
+              // GİRİLMEYEN BİLGİ RENGİ: SOLUK (black26)
+              hintStyle: const TextStyle(color: Colors.black26, fontSize: 13, fontWeight: FontWeight.w500),
+              prefixIcon: Icon(icon, color: const Color(0xFF536DFE), size: 20),
               filled: true,
               fillColor: Colors.white,
-              contentPadding: const EdgeInsets.all(20),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(15),
                 borderSide: const BorderSide(color: Colors.black12, width: 1),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
-                borderSide:
-                    const BorderSide(color: Color(0xFF536DFE), width: 1.5),
+                borderRadius: BorderRadius.circular(15),
+                borderSide: const BorderSide(color: Color(0xFF536DFE), width: 1.5),
               ),
             ),
           ),
