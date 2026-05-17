@@ -33,7 +33,7 @@ class PoseRecording extends PoseState {
 class PoseProcessingData extends PoseState {}
 
 class PoseAnalysisSuccess extends PoseState {
-  final String analysisResult;
+  final Map<String, dynamic> analysisResult;
   PoseAnalysisSuccess(this.analysisResult);
 }
 

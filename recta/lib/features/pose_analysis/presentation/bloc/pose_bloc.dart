@@ -2,7 +2,12 @@ import 'dart:async';
 import 'dart:developer' as developer;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/pose_repository.dart';
+import '../../data/datasources/backend_api_service.dart'; // AnalysisResult
 import '../../data/models/pose_frame_data.dart';
+import '../../domain/exercise_analyzer.dart';
+import '../../../../core/services/notification_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'pose_event.dart';
 import 'pose_state.dart';
 
@@ -15,6 +20,7 @@ class PoseBloc extends Bloc<PoseEvent, PoseState> {
   Stopwatch _stopwatch = Stopwatch();
   List<PoseFrameData> _collectedFrames = [];
   bool _isFrameProcessing = false;
+  ExerciseType _currentExercise = ExerciseType.squat;
 
   PoseBloc({required PoseRepository repository}) 
       : _repository = repository, super(PoseInitial()) {
@@ -26,6 +32,7 @@ class PoseBloc extends Bloc<PoseEvent, PoseState> {
 
   // 1. HAZIRLIK VE GERİ SAYIM METODU
   Future<void> _onStartRecording(StartRecordingEvent event, Emitter<PoseState> emit) async {
+    _currentExercise = event.exerciseType;
     _isPreparing = true; // Flag ile durumu takip ediyoruz
     
     for (int i = 3; i > 0; i--) {
@@ -59,9 +66,44 @@ class PoseBloc extends Bloc<PoseEvent, PoseState> {
     emit(PoseProcessingData()); // "Analiz ediliyor..." durumu
 
     try {
-      final result = await _repository.sendDataToBackend(_collectedFrames);
-      emit(PoseAnalysisSuccess(result));
+      // Typed AnalysisResult — artık JSON parse etmeye gerek yok
+      final AnalysisResult result = await _repository.sendDataToBackend(_collectedFrames, _currentExercise);
+
+      final analysisData = <String, dynamic>{
+        'skor':            result.skor,
+        'ozet':            result.ozet,
+        'geribildirimler': result.geribildirimler,
+        'tam_metin':       result.tamMetin,
+        'guclu_yonler':    result.gucluYonler,
+        'zayif_yonler':    result.zayifYonler,
+        'oneriler':        result.oneriler,
+      };
+
+      // Analiz sonucunu Firestore'a kaydet (UML şemasına uygun olarak frame'leri de yolluyoruz)
+      await _repository.saveAnalysisToFirestore(analysisData, _currentExercise, _collectedFrames);
+
+      emit(PoseAnalysisSuccess(analysisData));
+
+      // Bildirim kontrolü ve gönderimi
+      bool shouldNotify = true;
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final doc = await FirebaseFirestore.instance.collection('UserProfiles').doc(user.uid).get();
+        if (doc.exists) {
+          shouldNotify = doc.data()?['AiFeedback'] ?? true;
+        }
+      }
+
+      if (shouldNotify) {
+        await NotificationService().showNotification(
+          id: DateTime.now().millisecondsSinceEpoch ~/ 1000, 
+          title: "Analiziniz Hazır", 
+          body: "Gemini analiziniz tamamlandı, detayları inceleyebilirsiniz."
+        );
+      }
+
     } catch (e) {
+      developer.log("Analiz hatası: $e", name: 'PoseBloc');
       emit(PoseError("Analiz hatası: ${e.toString()}"));
     }
   }
@@ -72,8 +114,8 @@ class PoseBloc extends Bloc<PoseEvent, PoseState> {
     if (_isFrameProcessing) return;
 
     // Not: Artık hazırlık veya kayıt aşamasında değilsek bile çizim için çerçeve işlemeye devam ediyoruz.
-    // 3 saniye dolunca Stop event'ini tetikle
-    if (_isRecording && _stopwatch.elapsedMilliseconds >= 3000) {
+    // 4 saniye dolunca Stop event'ini tetikle
+    if (_isRecording && _stopwatch.elapsedMilliseconds >= 4000) {
       add(StopRecordingEvent());
       return;
     }
@@ -94,6 +136,7 @@ class PoseBloc extends Bloc<PoseEvent, PoseState> {
         event.inputImage,
         _isRecording ? _stopwatch.elapsedMilliseconds : 0,
         _collectedFrames.length + 1,
+        _currentExercise,
       );
       
       developer.log("Frame işlendi - Pose sayısı: ${poses.length}, frameData: ${frameData != null}", name: 'PoseBloc');
@@ -111,8 +154,13 @@ class PoseBloc extends Bloc<PoseEvent, PoseState> {
       } 
       // DURUM B: Gerçek Kayıt Sırasındaysak
       else if (_isRecording) {
-        if (frameData != null) {
+        if (frameData != null && _collectedFrames.length < 120) {
           _collectedFrames.add(frameData);
+        }
+        // 120 frame dolduysa kaydı otomatik bitir
+        if (_collectedFrames.length >= 120) {
+          add(StopRecordingEvent());
+          return;
         }
         // UI'ı her karede hem frame sayısı hem iskelet çizimi için güncelle
         emit(PoseRecording(_collectedFrames.length, drawingData: drawingData));

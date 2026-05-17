@@ -21,12 +21,12 @@ class SkeletonPainter extends CustomPainter {
     if (poses.isEmpty) return;
 
     final paintLine = Paint()
-      ..color = const Color(0xFF5CAF8E)
+      ..color = const Color(0xFFFF4952)
       ..strokeWidth = 3.0
       ..strokeCap = StrokeCap.round;
 
     final paintDot = Paint()
-      ..color = const Color(0xFFB8E6D0)
+      ..color = const Color(0xFF1E104E)
       ..strokeWidth = 5.0
       ..style = PaintingStyle.fill;
 
