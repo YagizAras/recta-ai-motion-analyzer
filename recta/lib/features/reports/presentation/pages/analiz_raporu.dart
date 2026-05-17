@@ -3,11 +3,23 @@ import 'package:flutter/material.dart';
 class AnalysisReportScreen extends StatelessWidget {
   final String exerciseName;
   final String date;
-  const AnalysisReportScreen({super.key, required this.exerciseName, required this.date});
+  final Map<String, dynamic> analysisData;
+
+  const AnalysisReportScreen({super.key, required this.exerciseName, required this.date, required this.analysisData});
 
   @override
   Widget build(BuildContext context) {
     const Color neonIndigo = Color(0xFF536DFE);
+
+    final int score = analysisData['skor'] ?? 0;
+    final String summary = analysisData['ozet'] ?? "Analiz tamamlandı.";
+    final String feedback = analysisData['geribildirimler'] as String? ?? '';
+    final List<dynamic> strengths = analysisData['guclu_yonler'] ?? [];
+    final List<dynamic> weaknesses = analysisData['zayif_yonler'] ?? [];
+    final List<dynamic> recommendations = analysisData['oneriler'] ?? [];
+
+    Color scoreColor = score >= 85 ? Colors.greenAccent : (score >= 65 ? Colors.orangeAccent : Colors.redAccent);
+    String formStatus = score >= 85 ? "Mükemmel" : (score >= 65 ? "İyi" : "Geliştirilmeli");
 
     return ScrollConfiguration(
       behavior: const ScrollBehavior().copyWith(overscroll: false),
@@ -40,14 +52,35 @@ class AnalysisReportScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
+                  
+                  // DİNAMİK DOĞRULUK BARI
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Stack(
+                        children: [
+                          Container(height: 10, width: double.infinity, decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(10))),
+                          Container(
+                            height: 10, 
+                            width: constraints.maxWidth * (score / 100),
+                            decoration: BoxDecoration(
+                              color: scoreColor, 
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [BoxShadow(color: scoreColor.withOpacity(0.5), blurRadius: 10)],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
                   const Divider(color: Colors.white10),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildStat("Skor", "%88", Colors.greenAccent),
-                      _buildStat("Süre", "45s", Colors.white),
-                      _buildStat("Form", "İyi", neonIndigo),
+                      _buildStat("Skor", "%$score", scoreColor),
+                      _buildStat("Öneri", "${recommendations.isNotEmpty ? recommendations.length : (feedback.isNotEmpty ? '✓' : '0')}", Colors.white),
+                      _buildStat("Durum", formStatus, neonIndigo),
                     ],
                   ),
                 ],
@@ -58,9 +91,24 @@ class AnalysisReportScreen extends StatelessWidget {
             const Text("GEMINI AI INSIGHTS", style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.2, color: Colors.black26, fontSize: 11)),
             const SizedBox(height: 15),
             
-            _buildInsightCard("Hareket Analizi", "İniş fazında dengen oldukça stabil. Ancak derinleştiğinde dizlerinin hafifçe içeri kapandığını gözlemledim.", Icons.auto_awesome),
-            _buildInsightCard("Gelişim Önerisi", "Diz stabiliteni artırmak için antrenman öncesi 5 dakika 'Lateral Monster Walk' egzersizi yapabilirsin.", Icons.lightbulb_outline_rounded),
-            _buildInsightCard("Fizyoterapist Notu", "Fleksiyon açın ideal seviyede. Sol bilek mobiliten sağ tarafa göre bir tık daha az, bu bölgeye esneklik çalışması ekleyelim.", Icons.health_and_safety_outlined),
+            // Genel Özet — her zaman göster
+            _buildInsightCard("Genel Özet", summary, Icons.auto_awesome),
+            
+            // Güçlü Yönler
+            if (strengths.isNotEmpty)
+              _buildInsightCard("Güçlü Yönler", "• ${strengths.join('\n• ')}", Icons.thumb_up_alt_outlined),
+            
+            // Zayıf Yönler
+            if (weaknesses.isNotEmpty)
+              _buildInsightCard("Zayıf Yönler", "• ${weaknesses.join('\n• ')}", Icons.warning_amber_rounded),
+            
+            // Öneriler (structured list)
+            if (recommendations.isNotEmpty)
+              _buildInsightCard("Gelişim Önerisi", "• ${recommendations.join('\n\n• ')}", Icons.lightbulb_outline_rounded),
+            
+            // Geri bildirim (ham metin) — yalnızca structured listeler boşsa göster
+            if (recommendations.isEmpty && feedback.isNotEmpty)
+              _buildInsightCard("Geri Bildirimler", feedback, Icons.lightbulb_outline_rounded),
           ],
         ),
       ),

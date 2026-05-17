@@ -22,11 +22,11 @@ class PrivacyPolicyScreen extends StatelessWidget {
           children: [
             const Icon(Icons.shield_outlined, color: neonIndigo, size: 50),
             const SizedBox(height: 20),
-            const Text("Verileriniz Recta ile Güvende", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22)),
+            const Text("Verileriniz Recta ile Güvende", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: Colors.black)),
             const SizedBox(height: 15),
             const Text(
               "Recta AI, hareketlerinizi analiz ederken gizliliğinizi en üst düzeyde tutar. KVKK kapsamında verilerinizin nasıl işlendiğini aşağıdan inceleyebilirsiniz.",
-              style: TextStyle(color: Colors.black54, height: 1.5),
+              style: TextStyle(color: Colors.black, height: 1.5),
             ),
             const SizedBox(height: 30),
             
@@ -46,8 +46,8 @@ class PrivacyPolicyScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Kamera İzni", style: TextStyle(fontWeight: FontWeight.w900)),
-                        Text("Analiz için gerekli", style: TextStyle(color: Colors.black38, fontSize: 12)),
+                        Text("Kamera İzni", style: TextStyle(fontWeight: FontWeight.w900, color: Colors.black)),
+                        Text("Analiz için gerekli", style: TextStyle(color: Colors.black, fontSize: 12)),
                       ],
                     ),
                   ),
@@ -68,9 +68,9 @@ class PrivacyPolicyScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: Color(0xFF1A1B2F))),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: Colors.black)),
           const SizedBox(height: 8),
-          Text(desc, style: const TextStyle(color: Colors.black54, fontSize: 13, height: 1.4)),
+          Text(desc, style: const TextStyle(color: Colors.black, fontSize: 13, height: 1.4)),
         ],
       ),
     );

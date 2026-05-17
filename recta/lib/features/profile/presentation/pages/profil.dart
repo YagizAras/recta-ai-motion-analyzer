@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../authentication/presentation/bloc/auth_bloc.dart';
+import '../../../authentication/presentation/bloc/auth_event.dart';
+import '../../../authentication/presentation/bloc/auth_state.dart';
+import '../bloc/profile_bloc.dart';
+import '../bloc/profile_state.dart';
+
 import 'profil_duzenle.dart';
 import 'bildirim_tercihleri.dart';
-import 'güvenlikvesifre.dart'; // Senin dosya ismin
-import 'yardim_merkezi.dart';
-import 'uyg_hakkinda.dart'; // Senin dosya ismin
-import 'kvkk_izin.dart';
-import 'giris_ekrani.dart'; // Çıkış yapınca dönmek için gerekli
+import 'güvenlikvesifre.dart';
+import '../../../support/presentation/pages/yardim_merkezi.dart';
+import '../../../support/presentation/pages/uyg_hakkinda.dart';
+import '../../../support/presentation/pages/kvkk_izin.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -23,7 +29,7 @@ class ProfileScreen extends StatelessWidget {
           physics: const ClampingScrollPhysics(),
           child: Column(
             children: [
-              // 1. ÜST GRADYAN ALAN (Header)
+              // ÜST GRADYAN ALAN VE KULLANICI BİLGİSİ
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.only(top: 60, bottom: 40),
@@ -35,65 +41,80 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.vertical(bottom: Radius.circular(45)),
                 ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          const Text("PROFİL", 
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18, letterSpacing: 2)),
-                          const SizedBox(width: 48),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                    // PROFİL FOTOĞRAFI
-                    Stack(
+                child: BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    String userName = "KULLANICI";
+                    if (state is AuthSuccess) {
+                      userName = state.userName.toUpperCase();
+                    }
+                    
+                    return Column(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white24, width: 2),
-                          ),
-                          child: const CircleAvatar(
-                            radius: 55,
-                            backgroundColor: Colors.white12,
-                            child: Icon(Icons.person, size: 60, color: Colors.white),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                              const Text("PROFİL", 
+                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18, letterSpacing: 2)),
+                              const SizedBox(width: 48),
+                            ],
                           ),
                         ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: GestureDetector(
-                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfileScreen())),
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: const BoxDecoration(color: neonIndigo, shape: BoxShape.circle),
-                              child: const Icon(Icons.edit, color: Colors.white, size: 18),
+                        const SizedBox(height: 30),
+                        Stack(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white24, width: 2),
+                              ),
+                              child: const CircleAvatar(
+                                radius: 55,
+                                backgroundColor: Colors.white12,
+                                child: Icon(Icons.person, size: 60, color: Colors.white),
+                              ),
                             ),
-                          ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfileScreen())),
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: const BoxDecoration(color: neonIndigo, shape: BoxShape.circle),
+                                  child: const Icon(Icons.edit, color: Colors.white, size: 18),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(userName, 
+                          style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                        BlocBuilder<ProfileBloc, ProfileState>(
+                          builder: (context, profileState) {
+                            final subtitle = profileState.injuryHistory.isNotEmpty 
+                                ? profileState.injuryHistory 
+                                : "Profili düzenle";
+                            return Text(subtitle, 
+                              style: const TextStyle(color: Colors.white60, fontSize: 14, fontWeight: FontWeight.w500));
+                          },
                         ),
                       ],
-                    ),
-                    const SizedBox(height: 16),
-                    const Text("İLAYDA", 
-                      style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                    const Text("Bilgisayar Mühendisliği Öğrencisi", 
-                      style: TextStyle(color: Colors.white60, fontSize: 14, fontWeight: FontWeight.w500)),
-                  ],
+                    );
+                  },
                 ),
               ),
 
               const SizedBox(height: 30),
 
-              // 2. AYARLAR LİSTESİ
+              // AYARLAR LİSTESİ
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
@@ -136,7 +157,7 @@ class ProfileScreen extends StatelessWidget {
                     _buildProfileMenuItem(
                       context, 
                       Icons.privacy_tip_outlined, 
-                      "Gizlilik ve KVKK", 
+                      "Gizlilik ve KVKK",
                       neonIndigo,
                       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PrivacyPolicyScreen())),
                     ),
@@ -150,7 +171,7 @@ class ProfileScreen extends StatelessWidget {
 
                     const SizedBox(height: 30),
                     
-                    // 3. ÇIKIŞ YAP BUTONU (Sistemi Sıfırlar)
+                    // ÇIKIŞ BUTONU
                     _buildProfileMenuItem(
                       context, 
                       Icons.logout_rounded, 
@@ -158,12 +179,8 @@ class ProfileScreen extends StatelessWidget {
                       Colors.redAccent, 
                       isLast: true,
                       onTap: () {
-                        // Tüm sayfaları temizle ve Giriş Ekranına dön
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => const AuthScreen()),
-                          (route) => false,
-                        );
+                        context.read<AuthBloc>().add(const LogoutRequested());
+                        Navigator.of(context).popUntil((route) => route.isFirst);
                       },
                     ),
                     

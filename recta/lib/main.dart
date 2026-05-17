@@ -1,143 +1,109 @@
-<<<<<<< HEAD
-<<<<<<< ours
-=======
 import 'package:flutter/material.dart';
-<<<<<<< ours
+import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'firebase_options.dart';
+import 'core/services/notification_service.dart';
+import 'features/authentication/data/auth_repository.dart';
+import 'features/authentication/presentation/bloc/auth_bloc.dart';
+import 'features/authentication/presentation/bloc/auth_event.dart';
+import 'features/authentication/presentation/bloc/auth_state.dart';
+import 'features/authentication/presentation/pages/giris_ekrani.dart';
+import 'features/reports/presentation/pages/istatistik.dart';
+import 'features/profile/presentation/bloc/profile_bloc.dart';
+import 'features/profile/presentation/bloc/profile_event.dart';
+import 'features/profile/data/profile_repository.dart';
+import 'features/reports/presentation/bloc/reports_bloc.dart';
+import 'features/reports/presentation/bloc/reports_event.dart';
+// ── Mevcut UI sayfalarınızı buraya import edin: ──
 
 Future<void> main() async {
-  // Flutter altyapısını hazırlıyoruz
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Firebase'i başlatıyoruz
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Kamerayı sildik, uygulamayı direkt başlatıyoruz
-  runApp(const MyApp());
+  await NotificationService().init();
+
+  final cameras = await availableCameras();
+
+  runApp(MyApp(cameras: cameras));
 }
 
-// Uygulamanın şimdilik boş kalıbı (Kızarıklık olmasın diye)
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final List<CameraDescription> cameras;
+
+  const MyApp({super.key, required this.cameras});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(
-          child: Text('Firebase Başarıyla Bağlandı! '),
+    final authRepository = AuthRepository();
+
+    return RepositoryProvider.value(
+      value: authRepository,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthBloc>(
+            create: (_) => AuthBloc(authRepo: authRepository)..add(const AppStarted()),
+          ),
+          BlocProvider<ProfileBloc>(
+            create: (_) => ProfileBloc(repository: ProfileRepository())..add(LoadProfileSettings()),
+          ),
+          BlocProvider<ReportsBloc>(
+            create: (_) => ReportsBloc()..add(LoadReportsEvent()),
+          ),
+        ],
+        child: MaterialApp(
+          title: 'Recta - Canlı Hareket Analizi',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF006400),
+              brightness: Brightness.dark,
+            ),
+            useMaterial3: true,
+          ),
+          home: AuthWrapper(cameras: cameras),
         ),
       ),
-=======
-import 'pages/istatistik.dart';
-import 'pages/analiz_secim_ekrani.dart'; // Yeni ekranımızı import ettik
-import 'pages/profil.dart';
-import 'pages/giris_ekrani.dart'; // İlk açılış için
-
-void main() {
-  runApp(const RectaApp());
-}
-
-class RectaApp extends StatelessWidget {
-  const RectaApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Recta AI',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'SF Pro Display', // Varsa modern bir font
-        useMaterial3: true,
-      ),
-      // Uygulama ilk açıldığında giriş ekranı gelsin
-      home: const AuthScreen(), 
     );
   }
 }
 
-class MainNavigation extends StatefulWidget {
-  const MainNavigation({super.key});
-
-  @override
-  State<MainNavigation> createState() => _MainNavigationState();
-}
-
-class _MainNavigationState extends State<MainNavigation> {
-  int _selectedIndex = 0;
-
-  // Navigasyon sayfaları listesi
-  final List<Widget> _pages = [
-    const StatisticsScreen(), // Ana Sayfa (İndeks 0)
-    const Center(child: Text("Egzersizler Yakında")), // Branşlar (İndeks 1)
-    const ProfileScreen(), // Profil (İndeks 2)
-  ];
-
-  void _onItemTapped(int index) {
-    // EĞER ORTADAKİ ANALİZ BUTONUNA BASILDIYSA (Özel durum)
-    if (index == 1) { // İndeks tasarımına göre değişebilir
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const AnalysisSelectionScreen()),
-      );
-    } else {
-      setState(() {
-        _selectedIndex = index;
-      });
-    }
-  }
+/// AuthWrapper – Auth durumuna göre sayfa yönlendirmesi
+///
+/// Bu widget hiçbir UI çizmez; sadece AuthBloc state'ine göre
+/// mevcut sayfalarınıza yönlendirir:
+///   - AuthInitial / AuthLoading → Yükleniyor (splash)
+///   - AuthUnauthenticated / AuthFailure → WelcomePage / LoginPage
+///   - AuthSuccess → HomePage (userName ile)
+class AuthWrapper extends StatelessWidget {
+  final List<CameraDescription> cameras;
+  const AuthWrapper({super.key, required this.cameras});
 
   @override
   Widget build(BuildContext context) {
-    const Color neonIndigo = Color(0xFF536DFE);
-    const Color mainDark = Color(0xFF1A1B2F);
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        // ── 1. Uygulama İlk Açılışında (AuthInitial) Yükleniyor ──
+        if (state is AuthInitial) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator(color: Color(0xFF536DFE))),
+          );
+        }
 
-    return Scaffold(
-      body: _pages[_selectedIndex],
-      
-      // ALT NAVİGASYON BARI (Recta Temalı)
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20)],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          backgroundColor: Colors.white,
-          selectedItemColor: neonIndigo,
-          unselectedItemColor: Colors.black26,
-          showSelectedLabels: true,
-          showUnselectedLabels: false,
-          type: BottomNavigationBarType.fixed,
-          elevation: 0,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_rounded),
-              label: 'Panel',
-            ),
-            BottomNavigationBarItem(
-              icon: CircleAvatar(
-                backgroundColor: mainDark,
-                radius: 25,
-                child: Icon(Icons.add_a_photo_rounded, color: Colors.white, size: 20),
-              ),
-              label: 'Analiz',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_rounded),
-              label: 'Profil',
-            ),
-          ],
-        ),
-      ),
->>>>>>> theirs
+        // ── 2. Oturum açık → Ana Ekran (StatisticsScreen) ──
+        if (state is AuthSuccess) {
+          return StatisticsScreen(userName: state.userName, cameras: cameras);
+        }
+
+        // ── 3. Oturum yok (veya yükleniyor/hata durumu) → Giriş Ekranı ──
+        // Yüklenme (AuthLoading) veya Hata (AuthFailure) durumlarında 
+        // AuthScreen gösterilmeye devam etmeli ki formdaki veriler kaybolmasın 
+        // ve SnackBar hatayı gösterebilsin.
+        return const AuthScreen();
+      },
     );
   }
 }
->>>>>>> theirs
-=======
->>>>>>> features/image-processing

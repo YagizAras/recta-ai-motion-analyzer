@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:camera/camera.dart';
 import 'gelisim_detay.dart'; 
-import 'geri_bildirimler.dart';
-import 'profil.dart';
-import 'branslar.dart';
-import 'analiz_secim_ekrani.dart'; // Yeni hazırlık ekranımızı bağladık
+import '../../../support/presentation/pages/geri_bildirimler.dart';
+import '../../../profile/presentation/pages/profil.dart';
+import '../../../home/presentation/pages/branslar.dart';
+import '../../../pose_analysis/presentation/pages/analiz_secim_ekrani.dart';
+import '../bloc/reports_bloc.dart';
+import '../bloc/reports_state.dart';
 
 class StatisticsScreen extends StatelessWidget {
-  const StatisticsScreen({super.key});
+  final String? userName;
+  final List<CameraDescription> cameras;
+  const StatisticsScreen({super.key, this.userName, required this.cameras});
 
   @override
   Widget build(BuildContext context) {
-    // Renk Paleti - Mevcut Tasarımınla Tam Uyumlu
+    // Renk Paleti - Güncellenmiş Modern Yeşil
     const Color bgLight = Color(0xFFF8F9FB);
     const Color neonIndigo = Color(0xFF536DFE);
     const Color neonCoral = Color(0xFFFF5252);
-    const Color deepTeal = Color(0xFF00897B); 
+    const Color deepTeal = Color(0xFF00897B); // İstediğin o hafif koyu ve tok yeşil tonu
     const Color darkText = Color(0xFF1A1A1A);
 
     return ScrollConfiguration(
@@ -33,7 +39,7 @@ class StatisticsScreen extends StatelessWidget {
               children: [
                 const Text("MERHABA,", 
                   style: TextStyle(color: Colors.black38, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
-                Text("İLAYDA", 
+                Text(userName?.toUpperCase() ?? "KULLANICI", 
                   style: TextStyle(color: darkText, fontSize: 24, fontWeight: FontWeight.w900)),
               ],
             ),
@@ -53,20 +59,18 @@ class StatisticsScreen extends StatelessWidget {
               children: [
                 _buildSectionTitle("SON AKTİVİTE"),
                 const SizedBox(height: 12),
-                _buildLastActivityCard(neonIndigo),
+                _buildLastActivityCardFromBloc(context, neonIndigo),
                 
                 const SizedBox(height: 30),
 
                 _buildSectionTitle("ANALİZ"),
                 const SizedBox(height: 12),
-                
-                // YENİ HAREKET ANALİZİ - Seçim Ekranına Yönlendirildi
                 _buildWideActionCard(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AnalysisSelectionScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => AnalysisSelectionScreen(cameras: cameras)));
                   },
                   title: "YENİ HAREKET ANALİZİ",
-                  subtitle: "Analiz modunu seç ve formunu kontrol et",
+                  subtitle: "Kamerayı aç ve formunu kontrol et",
                   color: Colors.white,
                   icon: Icons.camera_alt_outlined,
                   iconColor: neonIndigo,
@@ -77,7 +81,7 @@ class StatisticsScreen extends StatelessWidget {
 
                 _buildWideActionCard(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const BranslarScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => BranslarScreen(cameras: cameras)));
                   },
                   title: "HAREKET KÜTÜPHANESİ",
                   subtitle: "Branş seç ve hemen analize başla",
@@ -114,7 +118,6 @@ class StatisticsScreen extends StatelessWidget {
               ],
             ),
 
-            // ALT NAVİGASYON BARI
             Align(
               alignment: Alignment.bottomCenter,
               child: _buildBottomNavigationBar(context, neonIndigo),
@@ -148,34 +151,71 @@ class StatisticsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLastActivityCard(Color accentColor) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1A1B2F), Color(0xFF2D2E4A)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildLastActivityCardFromBloc(BuildContext context, Color accentColor) {
+    return BlocBuilder<ReportsBloc, ReportsState>(
+      builder: (context, state) {
+        String exerciseName = "—";
+        String scoreText = "—";
+        String feedbackText = "Henüz analiz yapılmadı. Hemen bir analiz başlat!";
+
+        if (state is ReportsLoaded && state.history.isNotEmpty) {
+          final lastItem = state.history.first;
+          exerciseName = (lastItem['exerciseName'] ?? '—').toUpperCase();
+          final score = lastItem['score'] ?? 0;
+          scoreText = "%$score";
+
+          // Kritik cümle varsa onu kullan, yoksa analitik cümle çıkar (selamlama atla)
+          const _homeGreetings = ['merhaba', 'sayın', 'sevgili', 'dear', 'hello'];
+          bool _homeIsGreeting(String s) =>
+              _homeGreetings.any((g) => s.toLowerCase().trimLeft().startsWith(g));
+
+          String teaser = (lastItem['kritik_cumle'] ?? '').toString().trim();
+          if (_homeIsGreeting(teaser)) teaser = '';
+          if (teaser.isEmpty) {
+            final full = (lastItem['feedback'] ?? lastItem['ozet'] ?? '').toString();
+            const greetings = ['merhaba', 'sayın', 'sevgili', '"omuz', 'recta uygulama'];
+            final sentences = full.split(RegExp(r'[.!?]'));
+            final analytical = sentences.firstWhere(
+              (s) {
+                final t = s.trim().toLowerCase();
+                return t.length > 20 && !greetings.any((g) => t.startsWith(g));
+              },
+              orElse: () => full,
+            ).trim();
+            teaser = analytical.length > 90 ? '${analytical.substring(0, 87)}...' : analytical;
+          }
+          feedbackText = teaser;
+        }
+
+        return Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1A1B2F), Color(0xFF2D2E4A)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("SQUAT", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
-              Text("%88", style: TextStyle(color: accentColor, fontSize: 18, fontWeight: FontWeight.w900)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(exerciseName, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
+                  Text(scoreText, style: TextStyle(color: accentColor, fontSize: 18, fontWeight: FontWeight.w900)),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                feedbackText,
+                style: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
+              ),
             ],
           ),
-          const SizedBox(height: 10),
-          const Text(
-            "Gemini: 'Formun harika! Dizlerini biraz daha dışarı açarak dengeyi artırabilirsin.'",
-            style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -239,12 +279,9 @@ class StatisticsScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildNavItem(Icons.home_filled, "Anasayfa", true, activeColor, () {}),
-          
-          // ALT BAR ANALİZ BUTONU - Seçim Ekranına Yönlendirildi
           _buildNavItem(Icons.camera_alt_outlined, "Analiz", false, activeColor, () {
-             Navigator.push(context, MaterialPageRoute(builder: (context) => const AnalysisSelectionScreen()));
+             Navigator.push(context, MaterialPageRoute(builder: (context) => AnalysisSelectionScreen(cameras: cameras)));
           }),
-          
           _buildNavItem(Icons.auto_graph_rounded, "Gelişim", false, activeColor, () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => const ProgressDetailScreen()));
           }),
