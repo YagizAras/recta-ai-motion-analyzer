@@ -1,3 +1,7 @@
 {
+<<<<<<< ours
     "cmake.sourceDirectory": "/Users/aras/Desktop/Recta/recta/linux"
+=======
+    "cmake.sourceDirectory": "/Users/ilayda/Desktop/recta-ai-motion-analyzer/recta/linux"
+>>>>>>> theirs
 }
