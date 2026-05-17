@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "272199452617",
+    "project_id": "recta-b2827",
+    "storage_bucket": "recta-b2827.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:272199452617:android:9d976bd552aeb375724a18",
+        "android_client_info": {
+          "package_name": "com.example.recta"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAiHQrQTVEvjO5SBxGnsvcDnmarsu1FN0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
