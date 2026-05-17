@@ -1,0 +1,89 @@
+Analyzing Recta...                                              
+
+warning • The value of the local variable 'user' isn't used • lib/features/authentication/presentation/bloc/auth_bloc.dart:121:13 • unused_local_variable
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/authentication/presentation/pages/giris_ekrani.dart:113:55 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/authentication/presentation/pages/giris_ekrani.dart:139:60 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/authentication/presentation/pages/giris_ekrani.dart:141:53 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/authentication/presentation/pages/giris_ekrani.dart:197:59 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/authentication/presentation/pages/giris_ekrani.dart:199:69 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/authentication/presentation/pages/sifre_sifirla.dart:127:53 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/authentication/presentation/pages/sifre_sifirla.dart:160:31 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/authentication/presentation/pages/sifre_sifirla.dart:188:33 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/authentication/presentation/pages/sifre_sifirla.dart:249:51 • deprecated_member_use
+warning • The value of the local variable 'neonIndigo' isn't used • lib/features/home/presentation/pages/branslar.dart:15:17 • unused_local_variable
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/home/presentation/pages/branslar.dart:82:41 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/home/presentation/pages/branslar.dart:90:44 • deprecated_member_use
+   info • The local variable '_toStrList' starts with an underscore • lib/features/pose_analysis/data/datasources/backend_api_service.dart:36:18 • no_leading_underscores_for_local_identifiers
+   info • Don't invoke 'print' in production code • lib/features/pose_analysis/data/pose_detector_service.dart:32:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/pose_analysis/data/repositories/pose_repository.dart:143:7 • avoid_print
+warning • Unused import: 'package:flutter/material.dart' • lib/features/pose_analysis/presentation/bloc/exercise_detail_event.dart:1:8 • unused_import
+warning • Unused import: 'package:flutter/material.dart' • lib/features/pose_analysis/presentation/bloc/exercise_detail_state.dart:1:8 • unused_import
+   info • The private field _stopwatch could be 'final' • lib/features/pose_analysis/presentation/bloc/pose_bloc.dart:20:13 • prefer_final_fields
+   info • The private field _collectedFrames could be 'final' • lib/features/pose_analysis/presentation/bloc/pose_bloc.dart:21:23 • prefer_final_fields
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/pose_analysis/presentation/pages/analiz_secim_ekrani.dart:88:56 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/pose_analysis/presentation/pages/analiz_secim_ekrani.dart:118:53 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/pose_analysis/presentation/pages/analiz_secim_ekrani.dart:124:54 • deprecated_member_use
+warning • Unused import: 'package:flutter_bloc/flutter_bloc.dart' • lib/features/pose_analysis/presentation/pages/analysis_loading_screen.dart:3:8 • unused_import
+warning • Unused import: '../bloc/pose_bloc.dart' • lib/features/pose_analysis/presentation/pages/analysis_loading_screen.dart:4:8 • unused_import
+warning • Unused import: '../bloc/pose_state.dart' • lib/features/pose_analysis/presentation/pages/analysis_loading_screen.dart:5:8 • unused_import
+warning • Unused import: '../../../reports/presentation/pages/analiz_raporu.dart' • lib/features/pose_analysis/presentation/pages/analysis_loading_screen.dart:6:8 • unused_import
+   info • Unnecessary use of multiple underscores • lib/features/pose_analysis/presentation/pages/analysis_loading_screen.dart:215:26 • unnecessary_underscores
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/pose_analysis/presentation/pages/analysis_loading_screen.dart:228:36 • deprecated_member_use
+   info • Unnecessary use of multiple underscores • lib/features/pose_analysis/presentation/pages/analysis_loading_screen.dart:237:26 • unnecessary_underscores
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/pose_analysis/presentation/pages/analysis_loading_screen.dart:259:40 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/pose_analysis/presentation/pages/analysis_loading_screen.dart:292:33 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/pose_analysis/presentation/pages/analysis_loading_screen.dart:331:23 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/pose_analysis/presentation/pages/analysis_loading_screen.dart:362:23 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/pose_analysis/presentation/pages/analysis_loading_screen.dart:402:27 • deprecated_member_use
+warning • The value of the local variable 'neonIndigo' isn't used • lib/features/pose_analysis/presentation/pages/egzersiz_detay.dart:21:17 • unused_local_variable
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/pose_analysis/presentation/pages/egzersiz_detay.dart:43:85 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/pose_analysis/presentation/pages/egzersiz_detay.dart:132:71 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/pose_analysis/presentation/pages/egzersiz_detay.dart:161:77 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/pose_analysis/presentation/pages/egzersiz_detay.dart:172:57 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/pose_analysis/presentation/pages/egzersiz_detay.dart:172:160 • deprecated_member_use
+   info • Parameter 'key' could be a super parameter • lib/features/pose_analysis/presentation/pages/pose_camera_page.dart:22:9 • use_super_parameters
+   info • The private field _currentCameraIndex could be 'final' • lib/features/pose_analysis/presentation/pages/pose_camera_page.dart:36:7 • prefer_final_fields
+   info • Statements in a for should be enclosed in a block • lib/features/pose_analysis/presentation/pages/pose_camera_page.dart:129:39 • curly_braces_in_flow_control_structures
+warning • Unused import: 'dart:io' • lib/features/pose_analysis/presentation/widgets/skeleton_painter.dart:2:8 • unused_import
+warning • The value of the local variable 'neonIndigo' isn't used • lib/features/profile/presentation/pages/bildirim_tercihleri.dart:12:17 • unused_local_variable
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/presentation/pages/bildirim_tercihleri.dart:81:51 • deprecated_member_use
+   info • 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre • lib/features/profile/presentation/pages/bildirim_tercihleri.dart:84:9 • deprecated_member_use
+   info • The file name 'güvenlikvesifre.dart' isn't a lower_case_with_underscores identifier • lib/features/profile/presentation/pages/güvenlikvesifre.dart:1:1 • file_names
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/presentation/pages/güvenlikvesifre.dart:139:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/presentation/pages/güvenlikvesifre.dart:148:36 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/presentation/pages/güvenlikvesifre.dart:176:22 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/presentation/pages/profil.dart:215:41 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/presentation/pages/profil.dart:225:26 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/presentation/pages/profil_duzenle.dart:132:70 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/presentation/pages/profil_duzenle.dart:177:58 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/presentation/pages/profil_duzenle.dart:177:100 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/presentation/pages/profil_duzenle.dart:184:68 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/presentation/pages/sifre_degistir.dart:232:59 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/presentation/pages/sifre_degistir.dart:268:51 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/analiz_raporu.dart:68:71 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/analiz_raporu.dart:132:137 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/gelisim_detay.dart:67:47 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/gelisim_detay.dart:138:66 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/gelisim_detay.dart:187:64 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/gelisim_detay.dart:225:70 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/gelisim_detay.dart:252:106 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/gelisim_detay.dart:261:58 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/istatistik.dart:88:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/istatistik.dart:103:37 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/istatistik.dart:114:36 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/istatistik.dart:138:51 • deprecated_member_use
+   info • The local variable '_homeGreetings' starts with an underscore • lib/features/reports/presentation/pages/istatistik.dart:168:17 • no_leading_underscores_for_local_identifiers
+   info • The local variable '_homeIsGreeting' starts with an underscore • lib/features/reports/presentation/pages/istatistik.dart:169:16 • no_leading_underscores_for_local_identifiers
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/istatistik.dart:238:59 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/istatistik.dart:240:40 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/istatistik.dart:248:34 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/reports/presentation/pages/istatistik.dart:263:64 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/support/presentation/pages/geri_bildirimler.dart:154:34 • deprecated_member_use
+   info • The local variable '_greetings' starts with an underscore • lib/features/support/presentation/pages/geri_bildirimler.dart:187:11 • no_leading_underscores_for_local_identifiers
+   info • The local variable '_isGreeting' starts with an underscore • lib/features/support/presentation/pages/geri_bildirimler.dart:188:10 • no_leading_underscores_for_local_identifiers
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/support/presentation/pages/geri_bildirimler.dart:244:43 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/support/presentation/pages/geri_bildirimler.dart:255:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/support/presentation/pages/geri_bildirimler.dart:257:54 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/support/presentation/pages/geri_bildirimler.dart:316:66 • deprecated_member_use
+   info • 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre • lib/features/support/presentation/pages/kvkk_izin.dart:54:39 • deprecated_member_use
+

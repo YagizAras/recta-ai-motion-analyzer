@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <<<<<<< ours
 =======
 import 'package:flutter/material.dart';
@@ -34,3 +35,5 @@ class MyApp extends StatelessWidget {
   }
 }
 >>>>>>> theirs
+=======
+>>>>>>> features/image-processing
